@@ -1,0 +1,29 @@
+
+server:
+    port: 8090
+    context-path: /springboot-sharding-jdbc3-dangdang
+    tomcat: 
+        uri-encoding: UTF-8
+        max-threads: 1000
+        
+spring:
+    jpa:
+        database: mysql
+        show-sql: true
+        hibernate:
+            ddl-auto: none
+            
+database0:
+    url: jdbc:mysql://localhost:3306/database0?characterEncoding=utf8&useSSL=false
+    username: root
+    password: root
+    driverClassName: com.mysql.jdbc.Driver
+    databaseName: database0
+    
+    
+database1:
+    url: jdbc:mysql://localhost:3306/database1?characterEncoding=utf8&useSSL=false
+    username: root
+    password: root
+    driverClassName: com.mysql.jdbc.Driver
+    databaseName: database1    
