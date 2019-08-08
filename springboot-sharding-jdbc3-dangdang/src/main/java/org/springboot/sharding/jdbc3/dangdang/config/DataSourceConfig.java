@@ -46,11 +46,14 @@ public class DataSourceConfig {
 	}
 
 	private DataSource buildDataSource() throws SQLException {
+		
 		// 分库设置
 		Map<String, DataSource> dataSourceMap = new HashMap<>(2);
+		
 		// 添加两个数据库database0和database1
 		dataSourceMap.put(database0Config.getDatabaseName(), database0Config.createDataSource());
 		dataSourceMap.put(database1Config.getDatabaseName(), database1Config.createDataSource());
+		
 		// 设置默认数据库
 		DataSourceRule dataSourceRule = new DataSourceRule(dataSourceMap, database0Config.getDatabaseName());
 

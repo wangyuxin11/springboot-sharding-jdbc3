@@ -26,7 +26,9 @@ import com.dangdang.ddframe.rdb.sharding.api.strategy.database.SingleKeyDatabase
 import com.google.common.collect.Range;
 
 /**
- * 这里使用的都是单键分片策略 示例分库策略是： GoodsId<=20使用database0库 其余使用database1库
+ * 这里使用的都是单键分片策略 
+ * 
+ * 示例分库策略是： GoodsId<=20使用database0库 其余使用database1库
  * 
  */
 @Component

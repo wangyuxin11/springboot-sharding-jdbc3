@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * 
  * 
  * 
+ * 这个实例是按主键id分，<20存database0, >20存database1  在database中再一次分表。
+ * 
  * 
  * 
  * @author wangyx
