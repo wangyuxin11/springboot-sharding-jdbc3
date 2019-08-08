@@ -1,4 +1,4 @@
-package org.springboot.sharding.jdbc3.apache.sharingalgorithm;
+package org.springboot.sharding.jdbc3.apache.examples2.sharingalgorithm;
 
 import java.util.Collection;
 
@@ -20,12 +20,15 @@ public class IdSharingAlgorithm implements PreciseShardingAlgorithm<Long> {
 				+ JSON.toJSONString(preciseShardingValue));
 
 		Long id = preciseShardingValue.getValue();
+		
 		for (String name : collection) {
 			if (name.endsWith(id % collection.size() + "")) {
 				System.out.println("return name: " + name);
 				return name;
 			}
 		}
+		
 		throw new IllegalArgumentException();
 	}
+	
 }

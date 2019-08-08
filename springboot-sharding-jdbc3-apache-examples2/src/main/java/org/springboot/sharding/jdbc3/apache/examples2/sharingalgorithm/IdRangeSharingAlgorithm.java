@@ -1,4 +1,4 @@
-package org.springboot.sharding.jdbc3.apache.sharingalgorithm;
+package org.springboot.sharding.jdbc3.apache.examples2.sharingalgorithm;
 
 import java.util.ArrayList;
 import java.util.Collection;

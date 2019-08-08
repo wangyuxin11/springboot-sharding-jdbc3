@@ -5,6 +5,8 @@
     <artifactId>springboot-sharding-jdbc3</artifactId>
     <version>1.0</version>
   </parent>
+  
+  
   <artifactId>springboot-sharding-jdbc3-apache</artifactId>
   
   

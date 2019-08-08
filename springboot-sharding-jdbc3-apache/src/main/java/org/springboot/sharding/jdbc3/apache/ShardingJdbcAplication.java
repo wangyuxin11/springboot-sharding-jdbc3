@@ -6,16 +6,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure;
 
-/**
- * @program: 
- * @description:
- * 
- * 
- * 
- * https://blog.csdn.net/u013308490/article/details/94629860
- * 
- * 
- */
+
 @SpringBootApplication(
         scanBasePackages = {"org.springboot.sharding.jdbc3.apache"},
         exclude = {DruidDataSourceAutoConfigure.class})

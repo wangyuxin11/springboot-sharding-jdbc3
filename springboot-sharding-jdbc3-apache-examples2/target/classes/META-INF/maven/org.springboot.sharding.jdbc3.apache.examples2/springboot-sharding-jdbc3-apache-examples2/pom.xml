@@ -1,0 +1,22 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springboot.sharding.jdbc3</groupId>
+		<artifactId>springboot-sharding-jdbc3</artifactId>
+		<version>1.0</version>
+	</parent>
+	<groupId>org.springboot.sharding.jdbc3.apache.examples2</groupId>
+	<artifactId>springboot-sharding-jdbc3-apache-examples2</artifactId>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springboot.sharding.jdbc3.apache</groupId>
+			<artifactId>springboot-sharding-jdbc3-apache</artifactId>
+			<version>1.0</version>
+		</dependency>
+	</dependencies>
+
+
+</project>
