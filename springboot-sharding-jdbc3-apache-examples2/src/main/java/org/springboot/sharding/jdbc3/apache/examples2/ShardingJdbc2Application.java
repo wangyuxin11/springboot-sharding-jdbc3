@@ -6,6 +6,21 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure;
 
+
+
+/**
+ * 分库：user0, user1
+ * 
+ * 执行@Test类后，user0库的 t_user0表  和  user1库的t_user1表 存了数据，说明分库分表成功。
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * @author wangyx
+ *
+ */
 @SpringBootApplication(
         scanBasePackages = {"org.springboot.sharding.jdbc3.apache"},
         exclude = {DruidDataSourceAutoConfigure.class})

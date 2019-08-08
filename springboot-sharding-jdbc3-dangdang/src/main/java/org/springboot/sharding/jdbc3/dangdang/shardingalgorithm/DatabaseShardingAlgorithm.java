@@ -2,15 +2,15 @@ package org.springboot.sharding.jdbc3.dangdang.shardingalgorithm;
 
 /*
  
- 由于这里只是简单的分库分表样例，所以分库类这里实现SingleKeyDatabaseShardingAlgorithm类，
- 采用了单分片键数据源分片算法，需要重写三个方法，分别是：
-
-doEqualSharding：SQL中==的规则。
-doInSharding：SQL中in的规则。
-doBetweenSharding：SQL中between的规则。
-本文分库规则是基于值大于20则使用database0，其余使用database1，所以简单if，else就搞定了，
-分库算法类DatabaseShardingAlgorithm代码如下所示。
-
+		 由于这里只是简单的分库分表样例，所以分库类这里实现SingleKeyDatabaseShardingAlgorithm类，
+		 采用了单分片键数据源分片算法，需要重写三个方法，分别是：
+		
+				doEqualSharding：SQL中==的规则。
+				doInSharding：SQL中in的规则。
+				doBetweenSharding：SQL中between的规则。
+				
+		本文分库规则是基于值大于20则使用database0，其余使用database1，所以简单if，else就搞定了，
+		分库算法类DatabaseShardingAlgorithm代码如下所示。
 
  */
 import java.util.Collection;
@@ -28,8 +28,6 @@ import com.google.common.collect.Range;
 /**
  * 这里使用的都是单键分片策略 示例分库策略是： GoodsId<=20使用database0库 其余使用database1库
  * 
- * @author yangyang
- * @date 2019/1/30
  */
 @Component
 public class DatabaseShardingAlgorithm implements SingleKeyDatabaseShardingAlgorithm<Long> {
