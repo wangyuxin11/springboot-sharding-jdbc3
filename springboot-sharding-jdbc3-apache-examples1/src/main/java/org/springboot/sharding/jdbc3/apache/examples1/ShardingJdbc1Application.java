@@ -44,18 +44,46 @@ package org.springboot.sharding.jdbc3.apache.examples1;
  * 
  * 
  * 
+ * 至此，一个简单的spring boot下的sharding-jdbc分表项目初步完成，
+ * 
+ * 下面来编写测试用例，spring boot下我们可以方便的使用注解@SpringBootTest来进行单元测试。
+ * 
+ * 无需启动，直接运行测试类即可。
  * 
  * 
+ * 运行结果：user0库的t_user0, t_user1 两个表一个存单，一个存双。
  * 
+ * 再加一个表 t_user2, 修改yml中的配置，数据节点和按模运算分配。可以扩展到3个表
  * 
  * 
  * 
  */
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
+
+import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure;
+
+
+
+/**
+ * 
+ * 无需启动，直接运行@test类
+ * 
+ * @author wangyx
+ *
+ */
+@SpringBootApplication(
+        scanBasePackages = {"org.springboot.sharding.jdbc3.apache"},
+        exclude = {DruidDataSourceAutoConfigure.class})
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 public class ShardingJdbc1Application {
-
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
+ 
+    public static void main(String[] args) {
+        SpringApplication.run(ShardingJdbc1Application.class, args);
+    }
+ 
 }
+
+
