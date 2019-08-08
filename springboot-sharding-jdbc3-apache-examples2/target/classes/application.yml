@@ -27,7 +27,7 @@ sharding:
           sql.show: true
         tables:
           t_user:  #t_user表
-            key-generator-column-name: id  #主键
+            key-generator-column-name: id                 #主键
             actual-data-nodes: ds${0..1}.t_user${0..1}    #数据节点,均匀分布
             database-strategy:  #分库策略
                 inline: #行表达式
@@ -36,6 +36,6 @@ sharding:
             table-strategy:  #分表策略
                 standard:
                     sharding-column: id
-                    precise-algorithm-class-name: org.springboot.sharding.jdbc3.apache.sharingalgorithm.IdSharingAlgorithm
-                    range-algorithm-class-name: org.springboot.sharding.jdbc3.apache.sharingalgorithm.IdRangeSharingAlgorithm
+                    precise-algorithm-class-name: org.springboot.sharding.jdbc3.apache.examples2.sharingalgorithm.IdSharingAlgorithm
+                    range-algorithm-class-name: org.springboot.sharding.jdbc3.apache.examples2.sharingalgorithm.IdRangeSharingAlgorithm
             

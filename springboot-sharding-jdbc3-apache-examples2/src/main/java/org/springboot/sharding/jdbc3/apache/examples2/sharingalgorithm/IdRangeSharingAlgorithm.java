@@ -9,6 +9,13 @@ import com.google.common.collect.Range;
 import io.shardingsphere.api.algorithm.sharding.RangeShardingValue;
 import io.shardingsphere.api.algorithm.sharding.standard.RangeShardingAlgorithm;
 
+
+/**
+ * 
+ * RangeShardingAlgorithm是可选的，用于处理BETWEEN AND分片，
+ * 如果不配置RangeShardingAlgorithm，SQL中的BETWEEN AND将按照全库路由处理。
+ *
+ */
 public class IdRangeSharingAlgorithm implements RangeShardingAlgorithm<Long> {
  
     @Override

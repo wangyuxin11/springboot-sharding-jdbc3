@@ -45,7 +45,7 @@ public class UserTest {
 
 	@Test
 	public void getByIds() {
-		System.out.println(JSON.toJSONString(userMapper.getById(12L)));
+		System.err.println("----->" + JSON.toJSONString(userMapper.getById(12L)));
 	}
 
 }

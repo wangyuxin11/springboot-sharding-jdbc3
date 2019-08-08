@@ -7,7 +7,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure;
 
 @SpringBootApplication(
-        scanBasePackages = {"com.chengh.db"},
+        scanBasePackages = {"org.springboot.sharding.jdbc3.apache"},
         exclude = {DruidDataSourceAutoConfigure.class})
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class ShardingJdbc2Application {
