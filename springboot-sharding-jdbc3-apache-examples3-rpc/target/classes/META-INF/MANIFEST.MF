@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Implementation-Title: springboot-sharding-jdbc3-apache-examples3-rpc
+Implementation-Version: 1.0
+Built-By: wangyx
+Implementation-Vendor-Id: org.springboot.sharding.jdbc3.apache.example
+ s3
+Build-Jdk: 1.8.0_172
+Implementation-URL: http://projects.spring.io/spring-boot/springboot-s
+ harding-jdbc3/springboot-sharding-jdbc3-apache-examples3-rpc/
+Created-By: Maven Integration for Eclipse
+Implementation-Vendor: Pivotal Software, Inc.
+

@@ -18,10 +18,9 @@ public class IdSharingAlgorithm implements PreciseShardingAlgorithm<Long> {
 
 	@Override
 	public String doSharding(Collection<String> collection, PreciseShardingValue<Long> preciseShardingValue) {
-
 		System.out.println("collection: " + JSON.toJSONString(collection) + " ,preciseShardingValue: "
 				+ JSON.toJSONString(preciseShardingValue));
-
+		
 		Long id = preciseShardingValue.getValue();
 		
 		for (String name : collection) {

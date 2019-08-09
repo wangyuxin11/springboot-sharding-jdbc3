@@ -28,6 +28,20 @@ public class UserTest {
 //	@Resource
 //	IdGenerator idGenerator;
 
+	
+	
+	/**
+	 * 
+	 * 
+	 * user0  user1 两个库 t_user0  t_user1 两个表，sql在上层的工程中
+	 * 
+	 * 执行结果：user0 的  t_user0 中有数据，user1 的 t_user1 表中有数据
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
 	@Test
 	public void save() {
 		for (Integer i = 0; i < 100; i++) {
