@@ -20,7 +20,7 @@ public class IdRangeSharingAlgorithm implements RangeShardingAlgorithm<Long> {
  
     @Override
     public Collection<String> doSharding(Collection<String> collection, RangeShardingValue<Long> rangeShardingValue) {
-        System.out.println("collection: " + JSON.toJSONString(collection) + " ,rangeShardingValue: "
+        System.out.println("IdRangeSharingAlgorithm --> 打印 collection: " + JSON.toJSONString(collection) + " ,rangeShardingValue: "
                 + JSON.toJSONString(rangeShardingValue));
  
         Collection<String> collect = new ArrayList<>();

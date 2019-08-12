@@ -35,7 +35,7 @@ public class GoodsController {
 	private GoodsRepository goodsRepository;
 
 	/**
-	 * http://localhost:8090/springboot-sharding-jdbc3/save
+	 * http://localhost:8090/springboot-sharding-jdbc3-dangdang/save
 	 * @return
 	 */
 	@GetMapping("save")
@@ -51,7 +51,7 @@ public class GoodsController {
 	}
 
 	/**
-	 * http://localhost:8090/springboot-sharding-jdbc3/select
+	 * http://localhost:8090/springboot-sharding-jdbc3-dangdang/select
 	 * @return
 	 */
 	@GetMapping("select")

@@ -23,14 +23,26 @@
         <druid.version>1.1.10</druid.version>
         <junit.version>4.12</junit.version>
         <sharding.jdbc.version>3.0.0</sharding.jdbc.version>
+        
+		<kotlin.version>1.0.6</kotlin.version>
+		<motan.version>1.0.0</motan.version>
+		<poi.version>3.17</poi.version>
+		<logback.version>1.1.7</logback.version>
+		<slf4j.version>1.7.21</slf4j.version>
+		
 	</properties>
 
 	<modules>
-		<module>springboot-sharding-jdbc3-dangdang</module>
 		<module>springboot-sharding-jdbc3-apache</module>
 		<module>springboot-sharding-jdbc3-apache-examples1</module>
 		<module>springboot-sharding-jdbc3-apache-examples2</module>
-		<module>springboot-sharding-jdbc3-apache-examples3-rpc</module>
+		<module>springboot-sharding-jdbc3-dangdang</module>
 		<module>springboot-sharding-jdbc3-keygen</module>
+		<module>
+			springboot-sharding-jdbc3-multiple-datasource-jpa
+		</module>
+		<module>
+			springboot-sharding-jdbc3-multiple-datasource-mybaits
+		</module>
 	</modules>
 </project>
