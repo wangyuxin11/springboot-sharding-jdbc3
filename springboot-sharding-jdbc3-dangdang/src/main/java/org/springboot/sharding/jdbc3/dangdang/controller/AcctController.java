@@ -42,7 +42,8 @@ public class AcctController {
 			acct.setAcctId(i);
 			acct.setUserId(userId);
 			acct.setHashcode(Math.abs(hashcode));
-			acct.setModValue(Math.abs(hashcode%100));
+			//acct.setModValue(Math.abs(hashcode%100));
+			acct.setModValue(i+1);
 			
 			System.err.println(acct.toString());
 			

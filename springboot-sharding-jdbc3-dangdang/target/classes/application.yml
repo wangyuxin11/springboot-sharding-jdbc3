@@ -20,10 +20,66 @@ database0:
     driverClassName: com.mysql.jdbc.Driver
     databaseName: database0
     
-    
 database1:
     url: jdbc:mysql://localhost:3306/database1?characterEncoding=utf8&useSSL=false
     username: root
     password: root
     driverClassName: com.mysql.jdbc.Driver
-    databaseName: database1    
+    databaseName: database1
+    
+database2:
+    url: jdbc:mysql://localhost:3306/database2?characterEncoding=utf8&useSSL=false
+    username: root
+    password: root
+    driverClassName: com.mysql.jdbc.Driver
+    databaseName: database2
+    
+database3:
+    url: jdbc:mysql://localhost:3306/database3?characterEncoding=utf8&useSSL=false
+    username: root
+    password: root
+    driverClassName: com.mysql.jdbc.Driver
+    databaseName: database3
+    
+database4:
+    url: jdbc:mysql://localhost:3306/database4?characterEncoding=utf8&useSSL=false
+    username: root
+    password: root
+    driverClassName: com.mysql.jdbc.Driver
+    databaseName: database4
+    
+database5:
+    url: jdbc:mysql://localhost:3306/database5?characterEncoding=utf8&useSSL=false
+    username: root
+    password: root
+    driverClassName: com.mysql.jdbc.Driver
+    databaseName: database5
+    
+database6:
+    url: jdbc:mysql://localhost:3306/database6?characterEncoding=utf8&useSSL=false
+    username: root
+    password: root
+    driverClassName: com.mysql.jdbc.Driver
+    databaseName: database6
+    
+database7:
+    url: jdbc:mysql://localhost:3306/database7?characterEncoding=utf8&useSSL=false
+    username: root
+    password: root
+    driverClassName: com.mysql.jdbc.Driver
+    databaseName: database7
+    
+database8:
+    url: jdbc:mysql://localhost:3306/database8?characterEncoding=utf8&useSSL=false
+    username: root
+    password: root
+    driverClassName: com.mysql.jdbc.Driver
+    databaseName: database8
+    
+database9:
+    url: jdbc:mysql://localhost:3306/database9?characterEncoding=utf8&useSSL=false
+    username: root
+    password: root
+    driverClassName: com.mysql.jdbc.Driver
+    databaseName: database9
+    

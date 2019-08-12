@@ -7,6 +7,8 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.springboot.sharding.jdbc3.dangdang.shardingalgorithm.AccDatabaseShardingAlgorithm;
+import org.springboot.sharding.jdbc3.dangdang.shardingalgorithm.AccTableShardingAlgorithm;
 import org.springboot.sharding.jdbc3.dangdang.shardingalgorithm.DatabaseShardingAlgorithm;
 import org.springboot.sharding.jdbc3.dangdang.shardingalgorithm.TableShardingAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,40 @@ public class DataSourceConfig {
 
 	@Autowired
 	private Database1Config database1Config;
+	
+	@Autowired
+	private Database2Config database2Config;
+
+	@Autowired
+	private Database3Config database3Config;
+
+	@Autowired
+	private Database4Config database4Config;
+
+	@Autowired
+	private Database5Config database5Config;
+
+	@Autowired
+	private Database6Config database6Config;
+
+	@Autowired
+	private Database7Config database7Config;
+
+	@Autowired
+	private Database8Config database8Config;
+
+	@Autowired
+	private Database9Config database9Config;
+
+	
+	
+	
+	@Autowired
+	private AccDatabaseShardingAlgorithm accDatabaseShardingAlgorithm;
+
+	@Autowired
+	private AccTableShardingAlgorithm accTableShardingAlgorithm;
+	
 
 	@Autowired
 	private DatabaseShardingAlgorithm databaseShardingAlgorithm;
@@ -53,20 +89,44 @@ public class DataSourceConfig {
 		// 添加两个数据库database0和database1
 		dataSourceMap.put(database0Config.getDatabaseName(), database0Config.createDataSource());
 		dataSourceMap.put(database1Config.getDatabaseName(), database1Config.createDataSource());
+		dataSourceMap.put(database2Config.getDatabaseName(), database2Config.createDataSource());
+		dataSourceMap.put(database3Config.getDatabaseName(), database3Config.createDataSource());
+		dataSourceMap.put(database4Config.getDatabaseName(), database4Config.createDataSource());
+		dataSourceMap.put(database5Config.getDatabaseName(), database5Config.createDataSource());
+		dataSourceMap.put(database6Config.getDatabaseName(), database6Config.createDataSource());
+		dataSourceMap.put(database7Config.getDatabaseName(), database7Config.createDataSource());
+		dataSourceMap.put(database8Config.getDatabaseName(), database8Config.createDataSource());
+		dataSourceMap.put(database9Config.getDatabaseName(), database9Config.createDataSource());
+		
 		
 		// 设置默认数据库
 		DataSourceRule dataSourceRule = new DataSourceRule(dataSourceMap, database0Config.getDatabaseName());
 
 		// 分表设置，大致思想就是将查询虚拟表Goods根据一定规则映射到真实表中去
-		TableRule orderTableRule = TableRule.builder("goods").actualTables(Arrays.asList("goods_0", "goods_1"))
+		TableRule orderTableRule = TableRule.builder("goods")
+				.actualTables(Arrays.asList("goods_0", "goods_1"))
+				.databaseShardingStrategy(new DatabaseShardingStrategy("goods_id", databaseShardingAlgorithm))
+				.tableShardingStrategy(new TableShardingStrategy("goods_type", tableShardingAlgorithm))
 				.dataSourceRule(dataSourceRule).build();
+		
+		TableRule accTableRule = TableRule.builder("acct")
+				.actualTables(Arrays.asList("acct_0", "acct_1", "acct_2", "acct_3", "acct_4", "acct_5", "acct_6", "acct_7", "acct_8", "acct_9"))
+				.databaseShardingStrategy(new DatabaseShardingStrategy("acct_id", accDatabaseShardingAlgorithm))
+				.tableShardingStrategy(new TableShardingStrategy("mod_value", accTableShardingAlgorithm))
+				.dataSourceRule(dataSourceRule).build();
+		
+		
 
 		// 分库分表策略
 		ShardingRule shardingRule = ShardingRule.builder().dataSourceRule(dataSourceRule)
-				.tableRules(Arrays.asList(orderTableRule))
-				.databaseShardingStrategy(new DatabaseShardingStrategy("goods_id", databaseShardingAlgorithm))
-				.tableShardingStrategy(new TableShardingStrategy("goods_type", tableShardingAlgorithm)).build();
+				.tableRules(Arrays.asList(orderTableRule, accTableRule))
+//				.databaseShardingStrategy(new DatabaseShardingStrategy("goods_id", databaseShardingAlgorithm))
+//				.tableShardingStrategy(new TableShardingStrategy("goods_type", tableShardingAlgorithm))
+				.build();
+		
 		DataSource dataSource = ShardingDataSourceFactory.createDataSource(shardingRule);
+		
+		
 		return dataSource;
 	}
 

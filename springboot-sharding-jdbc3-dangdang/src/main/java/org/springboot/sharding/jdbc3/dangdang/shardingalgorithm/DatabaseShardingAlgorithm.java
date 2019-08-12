@@ -42,38 +42,53 @@ public class DatabaseShardingAlgorithm implements SingleKeyDatabaseShardingAlgor
 
 	@Override
 	public String doEqualSharding(Collection<String> availableTargetNames, ShardingValue<Long> shardingValue) {
+		String databaseName = null;
+		
 		Long value = shardingValue.getValue();
 		if (value <= 20L) {
-			return database0Config.getDatabaseName();
+			databaseName = database0Config.getDatabaseName();
 		} else {
-			return database1Config.getDatabaseName();
+			databaseName = database1Config.getDatabaseName();
 		}
+		
+		System.err.println("-------> DatabaseShardingAlgorithm.doEqualSharding - databaseName=" + databaseName);
+		return databaseName;
 	}
 
 	@Override
 	public Collection<String> doInSharding(Collection<String> availableTargetNames, ShardingValue<Long> shardingValue) {
+		String databaseName = null;
+		
 		Collection<String> result = new LinkedHashSet<>(availableTargetNames.size());
 		for (Long value : shardingValue.getValues()) {
 			if (value <= 20L) {
-				result.add(database0Config.getDatabaseName());
+				databaseName = database0Config.getDatabaseName();
 			} else {
-				result.add(database1Config.getDatabaseName());
+				databaseName = database1Config.getDatabaseName();
 			}
+			System.err.println("-------> DatabaseShardingAlgorithm.doInSharding - databaseName=" + databaseName);
+			result.add(database0Config.getDatabaseName());
 		}
+		
+		result.add(database1Config.getDatabaseName());
 		return result;
 	}
 
 	@Override
 	public Collection<String> doBetweenSharding(Collection<String> availableTargetNames,
 			ShardingValue<Long> shardingValue) {
+		String databaseName = null;
+		
 		Collection<String> result = new LinkedHashSet<>(availableTargetNames.size());
 		Range<Long> range = shardingValue.getValueRange();
 		for (Long value = range.lowerEndpoint(); value <= range.upperEndpoint(); value++) {
 			if (value <= 20L) {
-				result.add(database0Config.getDatabaseName());
+				databaseName = database0Config.getDatabaseName();
 			} else {
-				result.add(database1Config.getDatabaseName());
+				databaseName = database1Config.getDatabaseName();
 			}
+			result.add(databaseName);
+			System.err.println("-------> DatabaseShardingAlgorithm.doBetweenSharding - databaseName=" + databaseName);
 		}
 		return result;
 	}

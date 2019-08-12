@@ -22,6 +22,7 @@ public class TableShardingAlgorithm implements SingleKeyTableShardingAlgorithm<L
 	public String doEqualSharding(final Collection<String> tableNames, final ShardingValue<Long> shardingValue) {
 		for (String each : tableNames) {
 			if (each.endsWith(shardingValue.getValue() % 2 + "")) {
+				System.err.println("---> TableShardingAlgorithm.doEqualSharding : tableName=" + each);
 				return each;
 			}
 		}
@@ -35,6 +36,7 @@ public class TableShardingAlgorithm implements SingleKeyTableShardingAlgorithm<L
 		for (Long value : shardingValue.getValues()) {
 			for (String tableName : tableNames) {
 				if (tableName.endsWith(value % 2 + "")) {
+					System.err.println("---> TableShardingAlgorithm.doInSharding : tableName=" + tableName);
 					result.add(tableName);
 				}
 			}
@@ -50,6 +52,7 @@ public class TableShardingAlgorithm implements SingleKeyTableShardingAlgorithm<L
 		for (Long i = range.lowerEndpoint(); i <= range.upperEndpoint(); i++) {
 			for (String each : tableNames) {
 				if (each.endsWith(i % 2 + "")) {
+					System.err.println("---> TableShardingAlgorithm.doBetweenSharding : tableName=" + each);
 					result.add(each);
 				}
 			}
