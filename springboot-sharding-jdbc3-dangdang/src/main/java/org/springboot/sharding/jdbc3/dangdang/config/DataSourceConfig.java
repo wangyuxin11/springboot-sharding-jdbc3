@@ -111,11 +111,11 @@ public class DataSourceConfig {
 		
 		TableRule accTableRule = TableRule.builder("acct")
 				.actualTables(Arrays.asList("acct_0", "acct_1", "acct_2", "acct_3", "acct_4", "acct_5", "acct_6", "acct_7", "acct_8", "acct_9"))
-				.databaseShardingStrategy(new DatabaseShardingStrategy("acct_id", accDatabaseShardingAlgorithm))
-				.tableShardingStrategy(new TableShardingStrategy("mod_value", accTableShardingAlgorithm))
+				//根据user_id 的 hashcode 来区分database
+				.databaseShardingStrategy(new DatabaseShardingStrategy("mod_value", accDatabaseShardingAlgorithm))
+				//根据分布式自增id来区分table
+				.tableShardingStrategy(new TableShardingStrategy("acct_id", accTableShardingAlgorithm))   //分表的不起做用，换成tableShardingAlgorithm 也不起作用 ，什么鬼, 换成acct_id就可以了，原来是用的mod_value没有起作用
 				.dataSourceRule(dataSourceRule).build();
-		
-		
 
 		// 分库分表策略
 		ShardingRule shardingRule = ShardingRule.builder().dataSourceRule(dataSourceRule)

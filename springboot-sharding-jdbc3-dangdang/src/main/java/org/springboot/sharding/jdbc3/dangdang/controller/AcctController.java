@@ -34,7 +34,7 @@ public class AcctController {
 		Acct acct = null;
 		
 		int i=1;
-		while(i<10) {
+		while(i<11) {
 			String userId = UUID.randomUUID().toString();//用来生成数据库的主键id非常不错。。   
 			int hashcode = userId.hashCode();
 			
@@ -42,13 +42,11 @@ public class AcctController {
 			acct.setAcctId(i);
 			acct.setUserId(userId);
 			acct.setHashcode(Math.abs(hashcode));
-			//acct.setModValue(Math.abs(hashcode%100));
-			acct.setModValue(i+1);
-			
-			System.err.println(acct.toString());
-			
+			acct.setModValue(Math.abs(hashcode%10));
 			acctRepository.save(acct);
 			
+			System.err.println(acct.toString());
+
 			i++;
 		}
 		
