@@ -1,3 +1,6 @@
+# springboot-sharding-jdbc3-dangdang  完成了分库分表操作。。。。。
+
+
 # springboot-sharding-jdbc3
 
 
