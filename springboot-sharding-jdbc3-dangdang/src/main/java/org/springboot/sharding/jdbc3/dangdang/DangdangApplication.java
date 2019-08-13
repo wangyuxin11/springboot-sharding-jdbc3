@@ -20,6 +20,11 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * 
  * 
  * 
+ * SpringBoot使用Sharding-JDBC分库分表
+ * https://juejin.im/post/5c5251b1518825469414ef4a
+ * 
+ * 
+ * 
  * @author wangyx
  *
  */

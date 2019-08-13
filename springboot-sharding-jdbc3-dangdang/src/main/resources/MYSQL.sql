@@ -40,3 +40,20 @@ CREATE TABLE `goods_1` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 
+
+
+
+
+
+DROP TABLE IF EXISTS `acct_0`;
+CREATE TABLE `acct_0` (
+  `acct_id` int(11) NOT NULL,
+  `user_id` varchar(255) NOT NULL,
+  `hashcode` int(11) DEFAULT NULL,
+  `mod_value` int(11) DEFAULT NULL,
+  PRIMARY KEY (`acct_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+
