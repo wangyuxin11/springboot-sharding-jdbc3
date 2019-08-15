@@ -44,5 +44,8 @@
 		<module>
 			springboot-sharding-jdbc3-multiple-datasource-mybaits
 		</module>
+		<module>
+			springboot-sharding-jdbc3-multiple-datasource-mybaits-package
+		</module>
 	</modules>
 </project>
