@@ -1,0 +1,15 @@
+package org.springboot.sharding.jdbc3.mybaits.aop;
+
+import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+
+@MapperScan("org.springboot.sharding.jdbc3.mybaits.aop.mapper")
+public class MultipleDataSourcesApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(MultipleDataSourcesApplication.class, args);
+	}
+}

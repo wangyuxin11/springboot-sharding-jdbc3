@@ -11,7 +11,11 @@ import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure;
 /**
  * 分库：user0, user1
  * 
- * 执行@Test类后, user0 库的 t_user0 表  和  user1 库的 t_user1 表 存了数据，说明分库分表成功。
+ * 执行@Test类后, 
+ * 		user0 库的 t_user0 表  
+ * 				和 
+ *  	user1 库的 t_user1 表 
+ *  	存了数据，说明分库分表成功。
  * 
  * 
  * 

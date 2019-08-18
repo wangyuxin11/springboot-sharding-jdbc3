@@ -47,5 +47,11 @@
 		<module>
 			springboot-sharding-jdbc3-multiple-datasource-mybaits-package
 		</module>
+		<module>
+			springboot-sharding-jdbc3-multiple-datasource-mybaits-jta
+		</module>
+		<module>
+			springboot-sharding-jdbc3-multiple-datasource-mybaits-aop
+		</module>
 	</modules>
 </project>

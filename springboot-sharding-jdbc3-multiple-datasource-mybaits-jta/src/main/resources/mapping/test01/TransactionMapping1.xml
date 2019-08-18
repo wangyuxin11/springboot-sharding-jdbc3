@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springboot.sharding.jdbc3.mybaits.jta.mapper.test01.TransactionMapping1">
+
+	<insert id="save" parameterType="org.springboot.sharding.jdbc3.mybaits.jta.bean.TestBean">
+		insert into cs_test
+		values(#{id},
+		#{userid},#{score},#{classid})
+	</insert>
+
+</mapper>
