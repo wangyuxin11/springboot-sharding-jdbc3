@@ -25,6 +25,19 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * 
  * 
  * 
+ * 
+ * 一、DatabaseShardingAlgorithm、TableShardingAlgorithm 
+ *分库策略是： GoodsId<=20使用database0库 其余使用database1库 
+ * 分表规则：GoodsType为奇数使用goods_1表 GoodsType为偶数使用goods_0表， 
+ * 
+ * 
+ * 二、AccDatabaseShardingAlgorithm 、 AccTableShardingAlgorithm
+ * 分库策略：除模10
+ * 分表策略：除模10
+ * 
+ * 
+ * 
+ * 
  * @author wangyx
  *
  */
