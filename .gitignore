@@ -1,5 +1,7 @@
 # Compiled class file
 *.class
+target
+work
 
 # Log file
 *.log

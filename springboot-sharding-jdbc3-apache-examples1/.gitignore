@@ -35,6 +35,8 @@ hs_err_pid*
 .settings
 .springBeans
 .class
+target
+work
 
 ### IntelliJ IDEA ###
 .idea
