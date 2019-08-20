@@ -1,6 +1,7 @@
 package org.springboot.sharding.jdbc3.dangdang;
 
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -45,6 +46,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableConfigurationProperties
+@MapperScan({"org.springboot.sharding.jdbc3.dangdang", "org.springboot.sharding.jdbc3.generator.uid.worker.dao"})
 public class DangdangApplication {
 
 	public static void main(String[] args) {

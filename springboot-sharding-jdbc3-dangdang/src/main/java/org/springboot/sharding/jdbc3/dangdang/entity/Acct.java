@@ -22,13 +22,14 @@ import javax.persistence.Table;
 public class Acct {
 	
 	@Id
-	private Integer acctId;
+	private Long acctId;
 	
 	private String userId;
 	
 	private Integer hashcode;
-	
-	private Integer modValue;
 
+	private Integer tableNo;
+	
+	private Integer databaseNo;
 	
 }

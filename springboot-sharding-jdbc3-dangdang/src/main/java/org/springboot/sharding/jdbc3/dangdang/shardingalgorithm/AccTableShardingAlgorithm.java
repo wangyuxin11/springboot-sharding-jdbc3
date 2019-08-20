@@ -10,13 +10,21 @@ import com.dangdang.ddframe.rdb.sharding.api.strategy.table.SingleKeyTableShardi
 import com.google.common.collect.Range;
 
 @Component
-public class AccTableShardingAlgorithm implements SingleKeyTableShardingAlgorithm<Integer> {
+public class AccTableShardingAlgorithm implements SingleKeyTableShardingAlgorithm<Long> {
 
 	@Override
-	public String doEqualSharding(Collection<String> tableNames, ShardingValue<Integer> shardingValue) {
+	public String doEqualSharding(Collection<String> tableNames, ShardingValue<Long> shardingValue) {
+		//Long acctId = shardingValue.getValue();
+		Long acctIdMode = shardingValue.getValue() % 10;
+		System.err.println("acctId : " + shardingValue.getValue() + " >> acct_" + String.valueOf(acctIdMode));
+		
 		for (String each : tableNames) {
-			if (each.endsWith(shardingValue.getValue() % 10 + "")) {
-				System.err.println("---> AccTableShardingAlgorithm.doEqualSharding : tableName=" + each);
+//			if (each.endsWith(shardingValue.getValue() % 10 + "")) {
+//				//return each;
+//				tableName = each;
+//			}
+			if(each.equals("acct_" + String.valueOf(acctIdMode))) {
+				System.err.println("---> tableName=" + each);
 				return each;
 			}
 		}
@@ -25,12 +33,12 @@ public class AccTableShardingAlgorithm implements SingleKeyTableShardingAlgorith
 
 	@Override
 	public Collection<String> doInSharding(Collection<String> tableNames,
-			ShardingValue<Integer> shardingValue) {
+			ShardingValue<Long> shardingValue) {
 		Collection<String> result = new LinkedHashSet<>(tableNames.size());
-		for (Integer value : shardingValue.getValues()) {
+		for (Long value : shardingValue.getValues()) {
 			for (String tableName : tableNames) {
 				if (tableName.endsWith(value % 10 + "")) {
-					System.err.println("---> AccTableShardingAlgorithm.doInSharding : tableName=" + tableName);
+					System.err.println("---> doInSharding : tableName=" + tableName);
 					result.add(tableName);
 				}
 			}
@@ -40,13 +48,13 @@ public class AccTableShardingAlgorithm implements SingleKeyTableShardingAlgorith
 
 	@Override
 	public Collection<String> doBetweenSharding(Collection<String> tableNames,
-			ShardingValue<Integer> shardingValue) {
+			ShardingValue<Long> shardingValue) {
 		Collection<String> result = new LinkedHashSet<>(tableNames.size());
-		Range<Integer> range = shardingValue.getValueRange();
-		for (Integer i = range.lowerEndpoint(); i <= range.upperEndpoint(); i++) {
+		Range<Long> range = shardingValue.getValueRange();
+		for (Long i = range.lowerEndpoint(); i <= range.upperEndpoint(); i++) {
 			for (String each : tableNames) {
 				if (each.endsWith(i % 10 + "")) {
-					System.err.println("---> AccTableShardingAlgorithm.doBetweenSharding : tableName=" + each);
+					System.err.println("---> doBetweenSharding : tableName=" + each);
 					result.add(each);
 				}
 			}

@@ -12,9 +12,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author wangyx
  *
  */
-public interface AcctRepository extends JpaRepository<Acct, Integer> {
+public interface AcctRepository extends JpaRepository<Acct, Long> {
  
-    List<Acct> findAllByAcctIdBetween(Integer acctId1, Integer acctId2);
+    List<Acct> findAllByAcctIdBetween(Long acctId1, Long acctId2);
  
-    List<Acct> findAllByAcctIdIn(List<Integer> acctIds);
+    List<Acct> findAllByAcctIdIn(List<Long> acctIds);
+    
+    
+    
+    
+    
+    
 }

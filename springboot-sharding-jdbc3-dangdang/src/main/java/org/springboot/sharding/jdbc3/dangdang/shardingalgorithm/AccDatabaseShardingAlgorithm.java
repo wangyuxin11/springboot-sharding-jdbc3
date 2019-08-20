@@ -92,7 +92,7 @@ public class AccDatabaseShardingAlgorithm implements SingleKeyDatabaseShardingAl
 			break;
 		}
 		
-		System.err.println("-------> AccDatabaseShardingAlgorithm.doEqualSharding - databaseName=" + databaseName);
+		System.err.println("-------> doEqualSharding | databaseName=" + databaseName + ", hashcode=" + value + ", mode=" + m);
 		
 		return databaseName;
 	}
@@ -138,7 +138,7 @@ public class AccDatabaseShardingAlgorithm implements SingleKeyDatabaseShardingAl
 				break;
 			}
 			result.add(databaseName); 
-			System.err.println("-------> DatabaseShardingAlgorithm.doInSharding - databaseName=" + databaseName);
+			System.err.println("-------> doInSharding - databaseName=" + databaseName);
 		}
 		return result;
 	}
@@ -184,7 +184,7 @@ public class AccDatabaseShardingAlgorithm implements SingleKeyDatabaseShardingAl
 				databaseName = database9Config.getDatabaseName();
 				break;
 			}
-			System.err.println("-------> AccDatabaseShardingAlgorithm.doBetweenSharding - databaseName=" + databaseName);
+			System.err.println("-------> doBetweenSharding - databaseName=" + databaseName);
 			result.add(databaseName);
 		}
 		return result;
