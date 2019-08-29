@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 多数据源事务测试 配置上jta-atomikos 之后事务变得正常 无论是test、test2还是test3，两个对象都是存不进去的
+ * 	多数据源事务测试 配置上jta-atomikos 之后事务变得正常 无论是test、test2还是test3，两个对象都是存不进去的
  * 
  * @author acer
  *
@@ -67,7 +67,7 @@ public class TransactionController {
 	 * 2\异常回滚
 	 * 3\cs_test表 保存一条
 	 * 
-	 * 结果：全部回滚
+	 * 	结果：全部回滚
 	 * 
 	 */
 	@RequestMapping("/test.do")
@@ -88,7 +88,7 @@ public class TransactionController {
 	 * 2\cs_teacher表 保存一条
 	 * 3\cs_test表 保存一条
 	 * 
-	 * 结果：全部回滚
+	 *	 结果：全部回滚
 	 * 
 	 */
 	@RequestMapping("/test2.do")
@@ -109,7 +109,7 @@ public class TransactionController {
 	 * 2\异常
 	 * 3\cs_test表 保存一条
 	 * 
-	 * 结果：全部回滚
+	 *	 结果：全部回滚
 	 * 
 	 */
 	@RequestMapping("/test3.do")
@@ -131,7 +131,7 @@ public class TransactionController {
 	 * 2\cs_test表 保存一条
 	 * 3\异常
 	 * 
-	 * 结果：全部回滚
+	 * 	结果：全部回滚
 	 * 
 	 */
 	@RequestMapping("/test4.do")

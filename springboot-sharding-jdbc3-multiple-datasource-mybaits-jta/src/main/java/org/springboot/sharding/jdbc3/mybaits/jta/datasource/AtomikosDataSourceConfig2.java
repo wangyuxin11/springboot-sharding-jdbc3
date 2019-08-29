@@ -40,15 +40,13 @@ public class AtomikosDataSourceConfig2 {
 
 	
 	@Bean(name = "test2SqlSessionFactory")
-	public SqlSessionFactory test2SqlSessionFactory(@Qualifier("test2DataSource") DataSource datasource)
-			throws Exception {
+	public SqlSessionFactory test2SqlSessionFactory(
+			@Qualifier("test2DataSource") DataSource datasource) throws Exception {
 		SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
 		bean.setDataSource(datasource);
-		bean.setMapperLocations(
-				new PathMatchingResourcePatternResolver().getResources("classpath*:mapping/test02/*.xml"));
+		bean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath*:mapping/test02/*.xml"));
 		return bean.getObject();
 	}
-
 	
 	
 	//这里没有 @Primary

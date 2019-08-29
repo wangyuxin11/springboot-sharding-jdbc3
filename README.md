@@ -1,7 +1,9 @@
 # springboot-sharding-jdbc3-dangdang  完成了分库分表操作。。。。。
 
 
-# springboot-sharding-jdbc3
+# springboot-sharding-jdbc3  
+
+# 项目源码地址： https://github.com/shardingjdbc/sharding-jdbc
 
 
 # 常用的分库分表中间件 https://www.cnblogs.com/jshen/p/7682502.html

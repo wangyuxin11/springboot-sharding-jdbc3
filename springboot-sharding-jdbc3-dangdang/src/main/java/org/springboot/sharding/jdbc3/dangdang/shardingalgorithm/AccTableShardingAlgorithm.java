@@ -9,6 +9,13 @@ import com.dangdang.ddframe.rdb.sharding.api.ShardingValue;
 import com.dangdang.ddframe.rdb.sharding.api.strategy.table.SingleKeyTableShardingAlgorithm;
 import com.google.common.collect.Range;
 
+
+/**
+ * 	单分片表分片算法	->	SingleKeyTableShardingAlgorithm
+ * 
+ * @author wangyx
+ *
+ */
 @Component
 public class AccTableShardingAlgorithm implements SingleKeyTableShardingAlgorithm<Long> {
 

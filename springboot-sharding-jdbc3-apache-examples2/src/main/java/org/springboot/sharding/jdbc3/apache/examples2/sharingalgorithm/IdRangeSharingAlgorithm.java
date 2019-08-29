@@ -13,7 +13,13 @@ import io.shardingsphere.api.algorithm.sharding.standard.RangeShardingAlgorithm;
 /**
  * 
  * RangeShardingAlgorithm是可选的，用于处理BETWEEN AND分片，
- * 如果不配置RangeShardingAlgorithm，SQL中的BETWEEN AND将按照全库路由处理。
+ * 	如果不配置RangeShardingAlgorithm，SQL中的BETWEEN AND将按照全库路由处理。
+ * 
+ * 	
+ * 	Range 范围
+ * 	Sharding 分片 
+ *  Algorithm 算法
+ * 	
  *
  */
 public class IdRangeSharingAlgorithm implements RangeShardingAlgorithm<Long> {

@@ -1,0 +1,18 @@
+https://www.cnblogs.com/f-zhao/p/7877468.html?utm_source=debugrun&utm_medium=referral
+
+
+一、读写分离（主从配置）
+
+	这块的代码主要在core模块中的api/algorithm/masterslave下面  	import io.shardingsphere.api.algorithm.masterslave.MasterSlaveLoadBalanceAlgorithm;
+	
+	这块的算法的主要目的，其实是在读的时候，如何选择从数据库。
+	
+	按照常规的理解，可以有以下几种（参考dubbo）：
+	
+	
+	
+	
+	
+	
+	
+	

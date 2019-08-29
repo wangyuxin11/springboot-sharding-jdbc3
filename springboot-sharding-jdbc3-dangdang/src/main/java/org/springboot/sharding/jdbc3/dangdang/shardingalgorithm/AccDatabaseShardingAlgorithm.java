@@ -20,6 +20,14 @@ import com.dangdang.ddframe.rdb.sharding.api.ShardingValue;
 import com.dangdang.ddframe.rdb.sharding.api.strategy.database.SingleKeyDatabaseShardingAlgorithm;
 import com.google.common.collect.Range;
 
+
+/**
+ * 	单分片键数据源分片算法	SingleKeyDatabaseShardingAlgorithm
+ * 
+ * 
+ * @author wangyx
+ *
+ */
 @Component
 public class AccDatabaseShardingAlgorithm implements SingleKeyDatabaseShardingAlgorithm<Integer> {
 

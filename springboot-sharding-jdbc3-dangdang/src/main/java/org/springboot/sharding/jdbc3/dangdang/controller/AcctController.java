@@ -6,6 +6,9 @@ import org.springboot.sharding.jdbc3.dangdang.entity.Acct;
 import org.springboot.sharding.jdbc3.dangdang.repository.AcctRepository;
 import org.springboot.sharding.jdbc3.dangdang.service.UidGenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,51 +28,78 @@ public class AcctController {
     @Autowired
     private UidGenService uidGenService;
     
+    @Autowired
+	private TransactionTemplate transactionTemplate;
+    
     
 	/**
 	 * http://localhost:8090/springboot-sharding-jdbc3-dangdang/acct/save
+	 * 
+	 * 
+	 * 	开启编程事务后实现了夸库的数据库事务控制
+	 * 
+	 * 
+	 * 
 	 * @return
 	 */
 	@GetMapping("/acct/save")
 	public String test() {
-		StringBuffer accountBuffer = new StringBuffer();
+		StringBuffer accountBuffer = new StringBuffer("");
 		
-		Acct acct = null;
-		
-		int i=1;
-		while(i<2) {
-			long acctId = uidGenService.getUid();
-			
-			//
-			String userId = UUID.randomUUID().toString().replace("-", "");//用来生成数据库的主键id非常不错。。   
-			int hashcode = userId.hashCode();
-			
-			System.err.println("acctId=" + acctId + "[acct_" + (acctId % 10) + "] | hashcode="
-					+ String.valueOf(Math.abs(hashcode)) + "[database" + String.valueOf(Math.abs(hashcode) % 10) + "]");
-			
-			//分表依据 : DataSourceConfig  -> TableRule, ShardingRule
-			acct = new Acct();
-			acct.setAcctId(acctId);   //--> DataSourceConfig 计算 ‘分表’ 的依据
-			acct.setUserId(userId);   //--> DataSourceConfig 计算 ‘分库’ 的依据
-			acct.setHashcode(Math.abs(hashcode));
-			
-			Integer databaseNo = Math.abs(hashcode)%10;
-			acct.setDatabaseNo(databaseNo);         //分库id --> 依据 acct_id 自增分布式雪花id来区分库，会造成一个现象就是：一阶段的数据都落在一个库里。
-			
-			Long tableNo = acctId%10;
-			acct.setTableNo(tableNo.intValue());    //分表id -> user_id 相同的都落在一张表里。
-			acctRepository.save(acct);
-			
-			System.err.println(acct.toString());
-			//
-			accountBuffer.append(String.valueOf(acctId)).append(" [")
-				.append("database").append(Math.abs(hashcode)%10).append(" # ")
-				.append("acct_").append(tableNo).append("]")
-				.append(" - ");
-			
+		// 事务开启
+        transactionTemplate.setTimeout(30);
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				try {
+					Acct acct = null;
+					int i = 1;
+					while (i < 20) {
+						long acctId = uidGenService.getUid();
+						//
+						String userId = UUID.randomUUID().toString().replace("-", "");// 用来生成数据库的主键id非常不错。。
 
-			i++;
-		}
+						int hashcode = userId.hashCode();
+
+						System.err.println("acctId=" + acctId + "[acct_" + (acctId % 10) + "] "
+								+"| hashcode=" + String.valueOf(Math.abs(hashcode)) 
+								+ "[database" + String.valueOf(Math.abs(hashcode) % 10) + "]");
+
+						// 分表依据 : DataSourceConfig -> TableRule, ShardingRule
+						acct = new Acct();
+						acct.setAcctId(acctId); // --> DataSourceConfig 计算 ‘分表’ 的依据
+						acct.setUserId(userId); // --> DataSourceConfig 计算 ‘分库’ 的依据
+						acct.setHashcode(Math.abs(hashcode));
+
+						Integer databaseNo = Math.abs(hashcode) % 10;
+						acct.setDatabaseNo(databaseNo); // 分库id --> 依据 acct_id 自增分布式雪花id来区分库，会造成一个现象就是：一阶段的数据都落在一个库里。
+
+						Long tableNo = acctId % 10;
+						acct.setTableNo(tableNo.intValue()); // 分表id -> user_id 相同的都落在一张表里。
+						acctRepository.save(acct);
+
+						System.err.println(acct.toString());
+						
+						accountBuffer.append(String.valueOf(acctId)).append(" [").append("database").append(Math.abs(hashcode) % 10)
+								.append(" # ").append("acct_").append(tableNo).append("]").append(" - ");
+
+						if (i > 10) {
+							// 没有回滚，无数据库事务控制
+							throw new RuntimeException("ERROR");
+						}
+						i++;
+					}
+					
+				} catch(Exception e) {
+					e.printStackTrace();
+					accountBuffer.append(e.getMessage());
+					// 回滚
+					transactionStatus.setRollbackOnly();
+				}
+			}
+		});
+		
+		
+
 		
 		return accountBuffer.toString();
 	}
@@ -91,8 +121,6 @@ public class AcctController {
 		return acctRepository.findAllByAcctIdBetween(acctIdStart, acctIdEnd);   //find findAllByGoodsIdBetween(10L, 30L);
 	}
 	
-	
-	
 //	@GetMapping("query2")
 //	public Object query2() {
 //		List<Long> goodsIds = new ArrayList<>();
@@ -102,7 +130,6 @@ public class AcctController {
 //		goodsIds.add(25L);
 //		return goodsRepository.findAllByGoodsIdIn(goodsIds);
 //	}
-	
 	
 
 	/**
@@ -114,9 +141,5 @@ public class AcctController {
 		acctRepository.deleteAll();
 	}
 
-	
-	
-	
-	
 	
 }

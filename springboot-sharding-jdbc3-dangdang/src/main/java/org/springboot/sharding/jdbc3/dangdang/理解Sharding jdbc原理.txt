@@ -1,0 +1,294 @@
+http://www.lanxinbase.com/?p=2090
+
+《理解Sharding jdbc原理》
+
+相比于Spring基于AbstractRoutingDataSource实现的分库分表功能，Sharding jdbc在单库单表扩展到多库多表时，兼容性方面表现的更好一点。例如，spring实现的分库分表sql写法如下：
+		
+		select id, name, price, publish, intro
+		from book${tableIndex}
+		where id = #{id,jdbcType=INTEGER}
+	
+	
+sql中的表名book需要加一个分表的后缀tableIndex，也就是需要在sql注入的参数中指定插入哪个表。相比，Sharding jdbc在这一块封装的更好一点。其sql中，根本不需要指定tableIndex，而是根据分库分表策略自动路由。
+		
+		select id, name, price, publish, intro
+		from book
+		where id = #{id,jdbcType=INTEGER}
+		
+		
+Sharding jdbc的这种特性，在水平扩展的时候无疑更具有吸引力。试想一下，一个项目开发一段时间后，单库单表数据量急剧上升，需要分库分表解决数据库的访问压力。而现有sql配置都是基于单库单表实现的，如果基于spring的AbstractRoutingDataSource实现，需要修改每一个相关表的sql，修改涉及较多地方，出错概率较大。而基于Sharding jdbc实现时，sql无需修改，只需要在spring中添加Sharding jdbc的相关配置即可，减少了修改面，大大简化分库分表的实现难度。
+那么，Sharding jdbc是如何实现这种分库分表的逻辑呢？下面我们用一段简单、易懂的代码描述Sharding jdbc的原理。
+通常我们在写一段访问数据库的数据时，逻辑是这样的：
+
+		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(“application.xml”);
+		DataSource dataSource = ctx.getBean(“dataSource”, DataSource.class);
+		Connection connection = dataSource.getConnection();
+		
+		String sql = “select id, name, price, publish, intro from book where id = 111″;
+		PreparedStatement ps = connection.prepareStatement(sql);
+		ResultSet rs = ps.executeQuery();
+		// handle ResultSet…
+		
+		
+Sharding jdbc是基于JDBC协议实现的，当我们获得dataSource时，这个dataSource是Sharding jdbc自己定义的一个SpringShardingDataSource类型的数据源，
+该数据源在返回getConnection()及prepareStatement()时，分别返回ShardingConnection和ShardingPreparedStatement的实例对象。
+然后在executeQuery()时，ShardingPreparedStatement做了这样的一件事：
+
+	根据逻辑sql，经过分库分表策略逻辑计算，获得分库分表的路由结果SQLRouteResult；
+	SQLRouteResult中包含真实的数据源以及转换后的真正sql，利用真实的数据源去执行获得ResultSet；
+	将ResultSet列表封装成一个可以顺序读的ResultSet对象IteratorReducerResultSet。
+
+
+		class ShardingPreparedStatement implements PreparedStatement {
+		
+			@Override
+			public ResultSet executeQuery() throws SQLException {
+			List<SQLRouteResult> routeResults = routeSql(logicSql);
+			
+			List<ResultSet> resultSets = new ArrayList<>(routeResults.size());
+			for (SQLRouteResult routeResult : routeResults) {
+			PreparedStatement ps = routeResult.getDataSource().getConnection.prepareStatement(routeResult.getParsedSql());
+			ResultSet rs = ps.executeQuery();
+			resultSets.add(rs);
+			}
+			
+			return new IteratorReducerResultSet(resultSets);
+			}
+			…..
+		
+		}
+
+
+其中，分库分表策略的sql路由过程，我们将Sharding jdbc中的相关代码全部抽出来，放到一起来观看这个过程的实现：
+
+		// 环境准备
+		@SuppressWarnings(“resource”)
+		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(“application.xml”);
+		SpringShardingDataSource dataSource = ctx.getBean(SpringShardingDataSource.class);
+		Field field = SpringShardingDataSource.class.getSuperclass().getDeclaredField(“shardingContext”);
+		field.setAccessible(true);
+		ShardingContext sctx = (ShardingContext)field.get(dataSource);
+		ShardingRule shardingRule = sctx.getShardingRule();
+		
+		String logicSql = “select id, name, price, publish, intro from book where id = ?”;
+		List<Object> parameters = new ArrayList<>();
+		parameters.add(2000);
+		
+		// sql解析
+		MySqlStatementParser parser = new MySqlStatementParser(logicSql);
+		MySQLSelectVisitor visitor = new MySQLSelectVisitor();
+		SQLStatement statement = parser.parseStatement();
+		visitor.getParseContext().setShardingRule(shardingRule);
+		statement.accept(visitor);
+		
+		SQLParsedResult parsedResult = visitor.getParseContext().getParsedResult();
+		if (visitor.getParseContext().isHasOrCondition()) {
+		new OrParser(statement, visitor).fillConditionContext(parsedResult);
+		}
+		visitor.getParseContext().mergeCurrentConditionContext();
+		System.out.println(“Parsed SQL result: ” + parsedResult);
+		System.out.println(“Parsed SQL: ” + visitor.getSQLBuilder());
+		parsedResult.getRouteContext().setSqlBuilder(visitor.getSQLBuilder());
+		parsedResult.getRouteContext().setSqlStatementType(SQLStatementType.SELECT);
+		
+		// 分库分表路由
+		SQLRouteResult result = new SQLRouteResult(parsedResult.getRouteContext().getSqlStatementType(), parsedResult.getMergeContext(), parsedResult.getGeneratedKeyContext());
+		for (ConditionContext each : parsedResult.getConditionContexts()) {
+		Collection<Table> tables = parsedResult.getRouteContext().getTables();
+		final Set<String> logicTables = new HashSet<>();
+		tables.forEach(a -> logicTables.add(a.getName()));
+		
+		SingleTableRouter router = new SingleTableRouter(shardingRule,
+		logicTables.iterator().next(),
+		each,
+		parsedResult.getRouteContext().getSqlStatementType());
+		
+		RoutingResult routingResult = router.route();
+		
+		// sql改写 –> routingResult.getSQLExecutionUnits()
+		// —> SingleRoutingTableFactor.replaceSQL(sqlBuilder).buildSQL()
+		// 结果合并
+		result.getExecutionUnits().addAll(routingResult.getSQLExecutionUnits(parsedResult.getRouteContext().getSqlBuilder()));
+		}
+		// amendSQLAccordingToRouteResult(parsedResult, parameters, result);
+		for (SQLExecutionUnit each : result.getExecutionUnits()) {
+		System.out.println(each.getDataSource() + ” ” + each.getSql() + ” ” + parameters);
+		}
+
+
+准备环境。由于Sharding jdbc分库分表中ShardingRule这个类是贯穿整个路由过程，我们在Spring中写好Sharding jdbc的配置，利用反射获取一个这个对象。（Sharding jdbc版本以及配置，在文章最后列出，方便debug这个过程）
+
+sql解析。Sharding jdbc使用阿里的Druid库解析sql。在这个过程中，Sharding jdbc实现了一个自己的sql解析内容缓存容器SqlBuilder。当语法分析中解析到一个表名的时候，在SqlBuilder中缓存一个sql相关的逻辑表名的token。并且，Sharding jdbc会将sql按照语义解析为多个segment。例如，”select id, name, price, publish, intro from book where id = ？”将解析为，”select id, name, price, publish, intro | from | book | where | id = ?”。
+
+分库分表路由。根据ShardingRule中指定的分库分表列的参数值，以及分库分表策略，实行分库分表，得到一个RoutingResult 。RoutingResult 中包含一个真实数据源，以及逻辑表名和实际表名。
+
+sql改写。在SqlBuilder中，查找sql中解析的segment，将和逻辑表名一致的segment替换成实际表名。（segment中可以标注该地方是不是表名）
+以上代码执行结果如下：
+
+	
+	Parsed SQL result: SQLParsedResult(routeContext=RouteContext(tables=[Table(name=book, alias=Optional.absent())], sqlStatementType=null, sqlBuilder=null), generatedKeyContext=GeneratedKeyContext(columns=[], columnNameToIndexMap={}, valueTable={}, rowIndex=0, columnIndex=0, autoGeneratedKeys=0, columnIndexes=null, columnNames=null), conditionContexts=[ConditionContext(conditions={})], mergeContext=MergeContext(orderByColumns=[], groupByColumns=[], aggregationColumns=[], limit=null))
+	Parsed SQL: SELECT id, name, price, publish, intro FROM [Token(book)] WHERE id = ?
+	dataSource1 SELECT id, name, price, publish, intro FROM book_00 WHERE id = ? [2000]
+	dataSource2 SELECT id, name, price, publish, intro FROM book_02 WHERE id = ? [2000]
+	dataSource1 SELECT id, name, price, publish, intro FROM book_02 WHERE id = ? [2000]
+	dataSource2 SELECT id, name, price, publish, intro FROM book_01 WHERE id = ? [2000]
+	dataSource0 SELECT id, name, price, publish, intro FROM book_00 WHERE id = ? [2000]
+	dataSource0 SELECT id, name, price, publish, intro FROM book_01 WHERE id = ? [2000]
+	dataSource2 SELECT id, name, price, publish, intro FROM book_00 WHERE id = ? [2000]
+	dataSource1 SELECT id, name, price, publish, intro FROM book_01 WHERE id = ? [2000]
+	dataSource0 SELECT id, name, price, publish, intro FROM book_02 WHERE id = ? [2000]
+	
+	
+实际上，我们可以用更通俗易懂的代码表示sql改写的这个过程：
+
+	
+	String logicSql = “select id, name, price, publish, intro from book where id = 111″;
+	MySqlStatementParser parser = new MySqlStatementParser(logicSql);
+	SQLStatement statement = parser.parseStatement();
+	MySQLSimpleVisitor visitor = new MySQLSimpleVisitor();
+	statement.accept(visitor);
+	
+	String logicTable = “book”;
+	String realTable = “book_00″;
+	String token = “\\$\\{” + logicTable + “\\}”;
+	
+	String sqlBuilder = visitor.getAppender().toString();
+	String sql = sqlBuilder.replaceAll(token, realTable);
+	
+	System.out.println(sqlBuilder);
+	System.out.println(sql);
+	
+	 
+结果如下：
+
+	SELECT id, name, price, publish, intro
+	FROM ${book}
+	WHERE id = 111
+	SELECT id, name, price, publish, intro
+	FROM book_00
+	WHERE id = 111
+	
+	
+以上，大致将Sharding jdbc的原理及实现过程介绍了一下，如果想要了解正真的实现过程和细节，还需要对照代码仔细推敲。
+
+本文的实现环境：
+
+	<dependency>
+		<groupId>com.dangdang</groupId>
+		<artifactId>sharding-jdbc-core</artifactId>
+		<version>1.4.2</version>
+	</dependency>
+	<dependency>
+		<groupId>com.dangdang</groupId>
+		<artifactId>sharding-jdbc-config-spring</artifactId>
+		<version>1.4.0</version>
+	</dependency>	
+	
+	
+application.xml:
+
+	<?xml version=”1.0″ encoding=”UTF-8″?>
+	<beans xmlns=”http://www.springframework.org/schema/beans”
+	xmlns:xsi=”http://www.w3.org/2001/XMLSchema-instance”
+	xmlns:tx=”http://www.springframework.org/schema/tx”
+	xmlns:context=”http://www.springframework.org/schema/context”
+	xmlns:rdb=”http://www.dangdang.com/schema/ddframe/rdb”
+	xsi:schemaLocation=”
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-4.0.xsd
+	http://www.springframework.org/schema/tx
+	http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+	http://www.dangdang.com/schema/ddframe/rdb
+	http://www.dangdang.com/schema/ddframe/rdb/rdb.xsd”>
+	
+	<context:property-placeholder location=”classpath:jdbc.properties” ignore-unresolvable=”true” />
+	
+	<bean id=”dataSource0″ class=”org.springframework.jdbc.datasource.DriverManagerDataSource”>
+		<property name=”driverClassName” value=”com.mysql.jdbc.Driver” />
+		<property name=”url” value=”${jdbc.mysql.url0}” />
+		<property name=”username” value=”${jdbc.mysql.username0}” />
+		<property name=”password” value=”${jdbc.mysql.password0}” />
+	</bean>
+	
+	<bean id=”dataSource1″ class=”org.springframework.jdbc.datasource.DriverManagerDataSource”>
+		<property name=”driverClassName” value=”${driver}” />
+		<property name=”url” value=”${jdbc.mysql.url1}” />
+		<property name=”username” value=”${jdbc.mysql.username1}” />
+		<property name=”password” value=”${jdbc.mysql.password1}” />
+	</bean>
+	
+	<bean id=”dataSource2″ class=”org.springframework.jdbc.datasource.DriverManagerDataSource”>
+		<property name=”driverClassName” value=”${driver}” />
+		<property name=”url” value=”${jdbc.mysql.url2}” />
+		<property name=”username” value=”${jdbc.mysql.username2}” />
+		<property name=”password” value=”${jdbc.mysql.password2}” />
+	</bean>
+	
+	<!– sharding jdbc –>
+	<rdb:strategy id=”tableShardingStrategy” sharding-columns=”id”
+	algorithm-class=”com.wy.sharding.MemberSingleKeyTableShardingAlgorithm” />
+	
+		<rdb:data-source id=”shardingDataSource”>
+			<rdb:sharding-rule data-sources=”dataSource0,dataSource1,dataSource2″>
+				<rdb:table-rules>
+					<rdb:table-rule logic-table=”book”
+					actual-tables=”book_0${0..2}”
+					table-strategy=”tableShardingStrategy”/>
+					</rdb:table-rules>
+			</rdb:sharding-rule>
+		</rdb:data-source>
+	</beans>
+	
+	
+	
+	MemberSingleKeyTableShardingAlgorithm.java:
+	
+	
+	public class MemberSingleKeyTableShardingAlgorithm implements SingleKeyTableShardingAlgorithm<Integer> {
+
+		public String doEqualSharding(Collection<String> availableTargetNames, ShardingValue<Integer> shardingValue) {
+			String routeDBSuffix = getRouteDBSuffix(shardingValue.getValue());
+			for (String each : availableTargetNames) {
+				if (each.endsWith(routeDBSuffix)) {
+					return each;
+				}
+			}
+			throw new IllegalArgumentException();
+		}
+		
+		public Collection<String> doInSharding(Collection<String> availableTargetNames, ShardingValue<Integer> shardingValue) {
+			Collection<String> result = new LinkedHashSet<String>(availableTargetNames.size());
+			for (int value : shardingValue.getValues()) {
+				String routeDBSuffix = getRouteDBSuffix(value);
+				for (String tableName : availableTargetNames) {
+					if (tableName.endsWith(routeDBSuffix)) {
+					result.add(tableName);
+					}
+				}
+			}
+			return result;
+		}
+		
+		public Collection<String> doBetweenSharding(Collection<String> availableTargetNames, ShardingValue<Integer> shardingValue) {
+			Collection<String> result = new LinkedHashSet<String>(availableTargetNames.size());
+			Range<Integer> range = (Range<Integer>) shardingValue.getValueRange();
+			for (int i = range.lowerEndpoint(); i <= range.upperEndpoint(); i++) {
+				String routeDBSuffix = getRouteDBSuffix(i);
+				for (String each : availableTargetNames) {
+					if (each.endsWith(routeDBSuffix)) {
+					result.add(each);
+					}
+				}
+			}
+			return result;
+		}
+		
+		public String getRouteDBSuffix(Integer shardingCode) {
+			int modValue = shardingCode % 3;
+			return “0” + modValue;
+		}
+	
+	}
+	
