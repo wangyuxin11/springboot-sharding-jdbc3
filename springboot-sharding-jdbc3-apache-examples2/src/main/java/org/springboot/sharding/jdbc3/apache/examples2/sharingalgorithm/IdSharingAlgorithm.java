@@ -12,7 +12,7 @@ import io.shardingsphere.api.algorithm.masterslave.MasterSlaveLoadBalanceAlgorit
 
 
 /**
- * StandardShardingStrategy只支持单分片键，提供PreciseShardingAlgorithm和RangeShardingAlgorithm两个分片算法。
+ * 		StandardShardingStrategy只支持单分片键，提供PreciseShardingAlgorithm和RangeShardingAlgorithm两个分片算法。
  * 
  *     PreciseShardingAlgorithm是必选的，用于处理=和IN的分片。 
  * 
